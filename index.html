@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>検査終了後 音声ガイド</title>
+<style>
+body { font-family: -apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif; margin:18px; }
+.panel { border:1px solid #ddd; border-radius:12px; padding:16px; }
+button { margin-right:6px; }
+</style>
+</head>
+<body>
+<h1>検査終了後 音声ガイド</h1>
+<div class="panel">
+<select id="step">
+<option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option><option value="7">07</option><option value="8">08</option><option value="9">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option>
+</select>
+<p id="jp"></p>
+<p id="en"></p>
+<button onclick="play()">▶ Play</button>
+<button onclick="pause()">⏸ Pause</button>
+<button onclick="replay()">↺ Replay</button>
+<audio id="audio" controls></audio>
+</div>
+<script>
+const jp=['（音声 1 の日本語内容）', '（音声 2 の日本語内容）', '（音声 3 の日本語内容）', '（音声 4 の日本語内容）', '（音声 5 の日本語内容）', '（音声 6 の日本語内容）', '（音声 7 の日本語内容）', '（音声 8 の日本語内容）', '（音声 9 の日本語内容）', '（音声 10 の日本語内容）', '（音声 11 の日本語内容）', '（音声 12 の日本語内容）', '（音声 13 の日本語内容）', '（音声 14 の日本語内容）', '（音声 15 の日本語内容）', '（音声 16 の日本語内容）', '（音声 17 の日本語内容）', '（音声 18 の日本語内容）', '（音声 19 の日本語内容）', '（音声 20 の日本語内容）', '（音声 21 の日本語内容）', '（音声 22 の日本語内容）'];
+const en=['(English script for step 1)', '(English script for step 2)', '(English script for step 3)', '(English script for step 4)', '(English script for step 5)', '(English script for step 6)', '(English script for step 7)', '(English script for step 8)', '(English script for step 9)', '(English script for step 10)', '(English script for step 11)', '(English script for step 12)', '(English script for step 13)', '(English script for step 14)', '(English script for step 15)', '(English script for step 16)', '(English script for step 17)', '(English script for step 18)', '(English script for step 19)', '(English script for step 20)', '(English script for step 21)', '(English script for step 22)'];
+const audio=document.getElementById('audio');
+const sel=document.getElementById('step');
+function load(){
+ let i=sel.value-1;
+ document.getElementById('jp').innerText=jp[i];
+ document.getElementById('en').innerText=en[i];
+ audio.src='audio/'+String(i+1).padStart(2,'0')+'.mp3';
+}
+sel.onchange=load;
+function play(){audio.play();}
+function pause(){audio.pause();}
+function replay(){audio.currentTime=0;audio.play();}
+load();
+</script>
+</body>
+</html>

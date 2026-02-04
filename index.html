@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>患者入室（Patient Entry）音声ガイド</title>
+<title>検査終了後（After the Exam）音声ガイド</title>
 <style>
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif;
 background:linear-gradient(180deg,#f7fbff,#eef6ff);color:#0f172a;}
@@ -24,15 +24,7 @@ button:active{transform:scale(.98);}
 audio{width:100%;margin-top:10px;}
 .status{margin-top:8px;font-size:13px;color:#475569;}
 .hint{margin-top:10px;font-size:12px;color:#64748b;}
-
-.device-details{margin-top:10px;border:1px solid #cbd5f5;border-radius:14px;background:#f8fcff;padding:10px 12px;}
-.device-summary{cursor:pointer;font-size:14px;color:#0f172a;list-style:none;}
-.device-summary::-webkit-details-marker{display:none;}
-.device-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
-.device-btn{font-size:15px;padding:12px 14px;border-radius:12px;border:1px solid #cbd5f5;background:#eff6ff;text-align:left;}
-.device-btn:active{transform:scale(.98);}
-.device-btn.is-selected{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.25);background:#e0f2fe;}
-
+</style>
 
 /* === Implant Device Modal (emergency-style sheet) === */
 .fab-dev{position:fixed;left:16px;bottom:16px;z-index:10000;
@@ -55,12 +47,31 @@ border-radius:20px;padding:12px 12px 14px;box-shadow:0 18px 40px rgba(15,23,42,.
 .dev-close{background:#eff6ff;border:1px solid #cbd5f5;border-radius:14px;padding:10px 14px;font-size:15px}
 .dev-title{font-size:12px;color:#64748b;margin:0 0 8px 6px}
 
-</style>
+/* === Implant Device Modal (emergency-style sheet) === */
+.fab-dev{position:fixed;left:16px;bottom:16px;z-index:10000;
+background:#f8fcff;border:2px solid #38bdf8;color:#0f172a;
+border-radius:14px;padding:12px 14px;font-weight:800}
+.dev-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);
+z-index:9998;display:none}
+.dev-sheet{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+display:none;padding:12px 12px 18px}
+.dev-panel{max-width:860px;margin:0 auto;background:#fff;
+border-radius:20px;padding:12px 12px 14px;box-shadow:0 18px 40px rgba(15,23,42,.25)}
+.dev-list{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow:auto;padding:4px}
+.dev-item{border:1px solid #e2e8f0;border-radius:16px;padding:12px 12px;background:#ffffff}
+.dev-item:active{transform:scale(.99)}
+.dev-item.is-active{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.18)}
+.dev-jp{font-weight:800;font-size:16px;line-height:1.25}
+.dev-en{font-size:13px;color:#475569;margin-top:4px;line-height:1.25}
+.dev-audio{margin-top:12px}
+.dev-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px}
+.dev-close{background:#eff6ff;border:1px solid #cbd5f5;border-radius:14px;padding:10px 14px;font-size:15px}
+.dev-title{font-size:12px;color:#64748b;margin:0 0 8px 6px}
 </head>
 <body>
 <div class="header">
   <div class="frame-title">
-    <h1>患者入室（Patient Entry）</h1>
+    <h1>検査終了後（After the Exam）</h1>
     <p>English Audio Guide</p>
   </div>
 </div>
@@ -96,23 +107,26 @@ border-radius:20px;padding:12px 12px 14px;box-shadow:0 18px 40px rgba(15,23,42,.
 
 <script>
 const STEPS = [
- {preview:"本日の通訳はすでに退勤しています…", jp:"本日の通訳はすでに退勤していますので、英語のガイドを使って説明します。", en:"Our interpreter has already left for the day, so I'll explain using an English guide."},
- {preview:"分からないことがあれば…", jp:"分からないことがあれば、いつでも言ってください。", en:"Please let me know if anything is unclear."},
- {preview:"生年月日を教えてください…", jp:"生年月日を教えていただけますか？", en:"Could you tell me your date of birth?"},
- {preview:"心臓デバイスの確認…", jp:"胸にペースメーカー、ICD、CRTなどの心臓デバイスは入っていますか？", en:"Do you have any heart devices in your chest, like a pacemaker, ICD, or CRT?"},
- {preview:"ベッドに座ってください…", jp:"ベッドに座って、靴を脱いでください。", en:"Please sit on the bed and take off your shoes."},
- {preview:"仰向けに寝てください…", jp:"ベッドに仰向けで寝てください。", en:"Please lie on your back on the bed."},
- {preview:"頭と足の位置…", jp:"頭はここ、足はあちらです。", en:"Your head goes here, and your feet go there."},
- {preview:"立ち上がって座る…", jp:"ゆっくり立ち上がって、ベッドに座ってください。", en:"Please stand up slowly and sit on the bed."},
- {preview:"スライドボード…", jp:"背中の後ろにスライドボードを入れますね。", en:"I'll put a slide board behind your back."},
- {preview:"ベッドへ移動…", jp:"これからベッドに移りますね。", en:"Let me slide you onto the bed now."},
- {preview:"少し上に…", jp:"少し上にずれてください。", en:"Please slide up a little."},
- {preview:"少し下に…", jp:"少し下にずれてください。", en:"Please slide down a little."},
- {preview:"上に移動…", jp:"少し上に移動しますね。", en:"I'll slide you up a little."},
- {preview:"下に移動…", jp:"少し下に移動しますね。", en:"I'll slide you down a little."},
- {preview:"首は大丈夫？", jp:"首はつらくないですか？", en:"Is your neck comfortable?"},
- {preview:"高さの確認…", jp:"高すぎたり低すぎたりしませんか？", en:"Is it not too high or low?"},
- {preview:"ベッドが動きます…", jp:"ベッドが動きますので、動かないでください。", en:"The bed will move now, so please stay still."}
+ {preview:"検査は終わりました。今からベッド…", jp:"検査は終わりました。今からベッドを装置の外へ出しますね。", en:"The scan is finished. I’ll move the bed out of the scanner now."},
+ {preview:"ベルトを外しますね。", jp:"ベルトを外しますね。", en:"I’ll take off the belt now."},
+ {preview:"血圧を測りますね。", jp:"血圧を測りますね。", en:"I’ll take your blood pressure."},
+ {preview:"造影剤アレルギーがないか確認する…", jp:"造影剤アレルギーがないか確認するため、30分ほど院内で待機をお願いします。", en:"We ask that you stay in the hospital for thirty minutes, so we can make sure you don’t have any allergic reactions to the contrast dye."},
+ {preview:"待っている間、トイレは行って大丈…", jp:"待っている間、トイレは行って大丈夫ですが、飲食は控えてください。", en:"While you’re waiting, it’s okay to use the restroom, but please avoid eating or drinking."},
+ {preview:"気分が悪くなったら、すぐ教えてく…", jp:"気分が悪くなったら、すぐ教えてください。", en:"If you feel sick, please tell us immediately."},
+ {preview:"今、吐き気・めまい・かゆみ・息苦…", jp:"今、吐き気・めまい・かゆみ・息苦しさなどの症状はありますか？", en:"Are you experiencing any symptoms such as nausea, dizziness, itching, and shortness of breath right now?"},
+ {preview:"待機が終わったら、造影剤を体から…", jp:"待機が終わったら、造影剤を体から出すために、普段より多めに水分をとって、何回か排尿してください。", en:"After the waiting period, please drink more water than usual and urinate several times to help flush the contrast dye out of your body."},
+ {preview:"水でなくても構いませんが、アルコ…", jp:"水でなくても構いませんが、アルコールは避けてください。", en:"It doesn’t have to be water, but please avoid alcohol."},
+ {preview:"まれに数日後に副作用が出ることが…", jp:"まれに数日後に副作用が出ることがあります。体調が悪くなったら、すぐご連絡ください。", en:"In rare cases, side effects may appear a few days later. If you start to feel unwell, please let us know right away."},
+ {preview:"心電図を外しますね。", jp:"心電図を外しますね。", en:"I’ll remove the ECG now."},
+ {preview:"女性スタッフが心電図を外します。", jp:"女性スタッフが心電図を外します。", en:"A female staff member will remove the ECG."},
+ {preview:"ベッドが下がります。", jp:"ベッドが下がります。", en:"The bed will go down."},
+ {preview:"完全に下がりきるまで動かないでく…", jp:"完全に下がりきるまで動かないでください。", en:"Please stay still until it is completely lowered."},
+ {preview:"ゆっくり起き上がってください。", jp:"ゆっくり起き上がってください。", en:"Please sit up slowly."},
+ {preview:"車いすに移りましょう。", jp:"車いすに移りましょう。", en:"Let’s move to the wheelchair."},
+ {preview:"ゆっくり立ち上がって、車いすに座…", jp:"ゆっくり立ち上がって、車いすに座ってください。", en:"Please stand up slowly and sit on the wheelchair."},
+ {preview:"背中の後ろにスライダーボードを入…", jp:"背中の後ろにスライダーボードを入れますね。", en:"I’ll put a slider board behind your back."},
+ {preview:"今からベッドへ移しますね。", jp:"今からベッドへ移しますね。", en:"I’ll slide you onto the bed now."},
+ {preview:"お大事にしてください。", jp:"お大事にしてください。", en:"Please take care of yourself."}
 ];
 
 const sel=document.getElementById('sel'),
@@ -146,19 +160,11 @@ document.getElementById('replay').onclick=()=>{player.currentTime=0;player.play(
 player.onplay=()=>status.textContent="再生中 / Playing";
 player.onpause=()=>status.textContent="一時停止 / Paused";
 player.onended=()=>status.textContent="待機中 / Ready";
-
-
 load(0);
 
-
+// === Implant Device Modal (tap-to-play) ===
 document.addEventListener('DOMContentLoaded',()=>{
   const DEV=[
-    {jp:'PM、CRT-P ありの場合：では検査後に心臓の機器を確認して、正常に作動しているか確認しますね。',
-     en:"Okay, we’ll check your heart device after the test to confirm everything is functioning properly.",
-     a:'audio/device_01_pm_crtp.m4a'},
-    {jp:'ICD、CRT-D ありの場合：では検査の前後に心臓の機器を確認して、正常に作動しているか確認しますね。',
-     en:"Okay, we’ll check your heart device before and after the test to confirm everything is functioning properly.",
-     a:'audio/device_02_icd_crtd.m4a'},
     {jp:'今から心臓の機器のチェックをしますね。担当者が来るまで少しお待ちください。',
      en:"We’ll check your heart device now. Please wait here for a moment until the staff arrives.",
      a:'audio/device_03_wait_for_staff.m4a'}
@@ -168,10 +174,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   const back=document.getElementById('devBackdrop');
   const sheet=document.getElementById('devSheet');
   const list=document.getElementById('devList');
-  const player=document.getElementById('devPlayer');
+  const devPlayer=document.getElementById('devPlayer');
   const close=document.getElementById('devClose');
 
-  if(!open || !back || !sheet || !list || !player || !close) return;
+  if(!open || !back || !sheet || !list || !devPlayer || !close) return;
 
   const show=()=>{back.style.display='block';sheet.style.display='block';open.style.display='none';};
   const hide=()=>{back.style.display='none';sheet.style.display='none';open.style.display='';};
@@ -184,8 +190,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     d.addEventListener('click',()=>{
       list.querySelectorAll('.dev-item').forEach(x=>x.classList.remove('is-active'));
       d.classList.add('is-active');
-      player.src=s.a;
-      player.play();
+      devPlayer.src=s.a;
+      devPlayer.play();
     });
     list.appendChild(d);
   });
@@ -194,12 +200,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   close.addEventListener('click', hide);
   back.addEventListener('click', hide);
 
-  document.addEventListener('keydown',(e)=>{
-    if(e.key==='Escape') hide();
-  });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') hide(); });
 });
 
 </script>
+</body>
 
 <button class="fab-dev" id="devOpen">植え込みデバイスがある場合</button>
 <div class="dev-backdrop" id="devBackdrop"></div>
@@ -218,6 +223,4 @@ document.addEventListener('DOMContentLoaded',()=>{
     </div>
   </div>
 </div>
-
-</body>
 </html>
